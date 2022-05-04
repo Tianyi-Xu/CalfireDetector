@@ -6,6 +6,7 @@ Flask-SQLAlchemy==2.5.1
 geographiclib==1.52
 geopandas==0.10.2
 geopy==2.2.0
+numpy
 pandas
 redis==4.2.2
 requests==2.27.1

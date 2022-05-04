@@ -34,6 +34,9 @@ class Report(Resource):
         longitude_min=longitude - 0.1,
         longitude_max=longitude + 0.1
         )
+        if not location:
+            return validated
+        
         print("find fire", location.latitude, location.longitude)
         if location and location.bright_ti4>400:
             validated = True

@@ -74,10 +74,9 @@ class FireModel(db.Model):
     @classmethod
     def find_by_location(cls, latitude_min, latitude_max, longitude_min, longitude_max):
         with app.app_context():
-            fire = cls.query.filter(
+            return cls.query.filter(
                 cls.latitude >= latitude_min, cls.latitude<=latitude_max,
                 cls.longitude>=longitude_min, cls.longitude<=longitude_max).first()
-        return fire
 
 
     def save_to_db(self):

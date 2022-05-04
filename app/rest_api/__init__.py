@@ -18,7 +18,8 @@ app.secret_key = "secret"
 app.config['JWT_AUTH_URL_RULE'] = '/login' #change /auth to /login
 app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400) # 1 day
 
-db = SQLAlchemy()
+db = SQLAlchemy(app) # binding the db with the app
+db.app = app
 
 
 from rest_api.resources.user import UserRegister
@@ -36,15 +37,14 @@ def create_tables():
     # create tables in sqlite db
     with app.app_context():
         db.create_all()
-    # fetch nasa data 
-    Fires.fetchDB()
+        # fetch nasa data 
+        Fires.fetchDB()
 
 
 scheduler = BackgroundScheduler()
 scheduler.start()
-# scheduler.add_job(Fires.fetchDB, 'interval', minutes=15) # run every 15 mins
-# scheduler.add_job(CalFires.notice, 'interval', minutes= 60*24) 
-scheduler.add_job(CalFires.notice, 'interval', minutes=1) # run every 15 mins
+scheduler.add_job(Fires.fetchDB, 'interval', minutes=1) # run every 15 mins
+scheduler.add_job(CalFires.notice, 'interval', minutes= 1) # run every day
 
 
 api.add_resource(Fires, '/fires')
