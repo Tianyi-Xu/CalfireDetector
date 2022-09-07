@@ -8,6 +8,7 @@ from rest_api.models.fire import FireModel
 from rest_api.models.user import UserModel
 from rest_api.models.fire import FireModel
 from rest_api.utils import get_coordinates
+from rest_api import queue
 
 # for report a fire
 class Report(Resource):
@@ -45,17 +46,16 @@ class Report(Resource):
 
     @staticmethod
     def notify(latitude, longitude):
-        # from rest_api import queue
         email_list = Report.find_nearby_users(latitude, longitude)
         for email in email_list:
             print(email + " notified")
-            # queue.enqueue('worker.send_message',
-            # args = ("We detected there is a possible Fire near your address!", email))
+            queue.enqueue('worker.send_message',
+            args = ("We detected there is a possible Fire near your address!", email))
         
     
     @staticmethod
     def find_nearby_users(latitude, longitude):
-        # 1 longitude = 111km find user in 11km
+        # find user in 10km
         users = UserModel.find_by_location(
             latitude_min = latitude - 0.1, 
             latitude_max = latitude + 0.1, 

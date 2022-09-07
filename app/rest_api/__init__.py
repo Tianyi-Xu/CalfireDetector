@@ -23,14 +23,13 @@ db.app = app
 
 
 from rest_api.resources.user import UserRegister
-from rest_api.resources.calfire import CalFires, CalPastFires
 from rest_api.resources.fire import Fires
 from rest_api.resources.report import Report
 from rest_api.security import authenticate, identity
 jwt = JWT(app, authenticate, identity) # JWT create a /auth for us 
 
-# r = Redis(host='redis', port=6379)
-# queue = Queue(connection=r)
+r = Redis(host='redis', port=6379)
+queue = Queue(connection=r)
 
 @app.before_first_request
 def create_tables():
@@ -43,12 +42,8 @@ def create_tables():
 
 scheduler = BackgroundScheduler()
 scheduler.start()
-scheduler.add_job(Fires.fetchDB, 'interval', minutes=1) # run every 15 mins
-scheduler.add_job(CalFires.notice, 'interval', minutes= 1) # run every day
-
-
+scheduler.add_job(Fires.fetchDB, 'interval', minutes=15) # run every 15 mins
+scheduler.add_job(Fires.notice, 'interval', minutes= 60*24) # run every day
 api.add_resource(Fires, '/fires')
-api.add_resource(CalFires, '/calfires')
-api.add_resource(CalPastFires, '/calpastfires')
 api.add_resource(Report,'/report')
 api.add_resource(UserRegister, '/register')
